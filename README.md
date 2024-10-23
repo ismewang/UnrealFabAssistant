@@ -20,4 +20,5 @@
 - https://gist.github.com/jamiephan/0c04986c7f2e62d5c87c4e8c8ce115fc
 
 ### 其他
-如果进行转载，请注明原出处 https://github.com/RyensX/UnrealFabItemsAllAdd
+1. 若有帮助到您，请点击右上角⭐支持一下，感谢使用
+1. 如果进行转载，请注明原出处 https://github.com/RyensX/UnrealFabItemsAllAdd
