@@ -5,10 +5,11 @@
 
 ### 如何使用
 1. 打开[run.js](/run.js)复制全部代码到剪切板
-2. 打开并登录 https://www.fab.com/
-3. 点击F12打开调试工具并切换到控制台（Console）tab
-4. 粘贴刚才复制的代码到输入框，然后回车
-5. 等待日志打印结束即完成入库
+2. 打开 https://www.fab.com/ 并登录
+3. 打开 https://www.fab.com/megascans-free 并领取
+4. 点击F12打开调试工具并切换到控制台（Console）tab
+5. 粘贴刚才复制的代码到输入框，然后回车
+6. 等待日志打印结束即完成入库
 
 ### 已知问题
 - 请求过多提示 "Too many requests."
@@ -17,3 +18,6 @@
 
 ### 鸣谢
 - https://gist.github.com/jamiephan/0c04986c7f2e62d5c87c4e8c8ce115fc
+
+### 其他
+如果进行转载，请注明原出处 https://github.com/RyensX/UnrealFabItemsAllAdd
