@@ -4,7 +4,7 @@
 >Note: 代码仅在chrome上测试通过，最好直接使用chrome
 
 ### 如何使用
-1. 打开[run.js](/blob/main/run.js)复制全部代码到剪切板
+1. 打开[run.js](/run.js)复制全部代码到剪切板
 2. 打开并登录 https://www.fab.com/
 3. 点击F12打开调试工具并切换到控制台（Console）tab
 4. 粘贴刚才复制的代码到输入框，然后回车
