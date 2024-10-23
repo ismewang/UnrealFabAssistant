@@ -1,5 +1,6 @@
-# UnrealFabItemsAllAdd
-把所有Fab Quixel全部重新入库
+# UnrealFabQuixelItemsAllAdd
+
+把所有Fab Quixel资产重新入库
 
 >Note: 代码仅在chrome上测试通过，最好直接使用chrome
 
