@@ -87,17 +87,14 @@
         console.log(`page=${page[0]} ,count=${page.length}`)
         nextPage = page[0]
         //并发循环获取详情
-        page[1].forEach(uid => {
-            let task = async (uid) => {
-                let item = await listingsApi(cookies, csrftoken, uid)
-                console.log(item)
-                console.log(`No.${++num} Item: name=${item[0]} , offerId=${item[1]}`)
-                //入库
-                let result = await addLibApi(cookies, csrftoken, uid, item[1])
-                console.log(`addLib No.${num} ${item[0]} result=${result} page=${page[0]}`)
-            }
-            tasks += task(uid)
+        page[1].forEach(async uid => {
+            let item = await listingsApi(cookies, csrftoken, uid)
+            console.log(item)
+            console.log(`No.${++num} Item: name=${item[0]} , offerId=${item[1]}`)
+            //入库
+            let result = await addLibApi(cookies, csrftoken, uid, item[1])
+            console.log(`addLib No.${num} ${item[0]} result=${result} page=${page[0]}`)
         })
-        break
+        //break
     }
 })())
