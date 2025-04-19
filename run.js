@@ -31,8 +31,6 @@
      * 添加到库
      */
     const addLibApi = async (cookies, token, uid, offerId) => {
-        const formdata = new FormData();
-        formdata.append("offer_id", offerId);
         const response = await fetch(`https://www.fab.com/i/listings/${uid}/add-to-library`, {
             "headers": {
                 "Cookies": cookies,
@@ -56,14 +54,13 @@
             "mode": "cors",
             "credentials": "include"
         });
-        return await response.status == 204
+        return response.status == 204
     }
 
     /**
      * 获取详细信息，主要要取得offerId
      */
     const listingsApi = async (cookies, token, uid) => {
-        //先查列表
         const response = await fetch(`https://www.fab.com/i/listings/${uid}`, {
             "headers": {
                 "accept": "application/json, text/plain, */*",
