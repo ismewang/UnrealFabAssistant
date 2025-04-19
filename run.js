@@ -63,6 +63,7 @@
      * 获取详细信息，主要要取得offerId
      */
     const listingsApi = async (cookies, token, uid) => {
+        //先查列表
         const response = await fetch(`https://www.fab.com/i/listings/${uid}`, {
             "headers": {
                 "accept": "application/json, text/plain, */*",
@@ -73,10 +74,20 @@
             "method": "GET",
         })
         let data = await response.json()
-        let name = data.title
-        console.log(`版本：${data.licenses[0]}和${data.licenses[1]} uid=${uid} token=${token}`)
-        let offerId = data.licenses[0].offerId//专业的offerId
-        return [name, offerId]
+        let title = data.title
+        let offerId = null
+        let type = null
+        //尽量专业版
+        for (licenseInfo of data.licenses) {
+            if (licenseInfo.priceTier.price == 0.0) {
+                offerId = licenseInfo.offerId
+                type = licenseInfo.slug
+                if (licenseInfo.slug == "professional") {
+                    break
+                }
+            }
+        }
+        return [offerId, type, title]
     }
 
     // 获取cookies和xtoken
@@ -111,12 +122,14 @@
             nextPage = page[0]
             //并发循环获取详情
             page[1].forEach(async uid => {
-                let item = await listingsApi(cookies, csrftoken, uid)
-                console.log(item)
-                console.log(`No.${++num} Item: name=${item[0]} , offerId=${item[1]}`)
-                //入库
-                let result = await addLibApi(cookies, csrftoken, uid, item[1])
-                console.log(`addLib No.${num} ${item[0]} result=${result} page=${page[0]}`)
+                let info = await listingsApi(cookies, csrftoken, uid)
+                let [offerId, type, title] = info
+                if (offerId != null) {
+                    console.log(`No.${++num} Item: name=${title} , offerId=${offerId}`)
+                    //入库
+                    let result = await addLibApi(cookies, csrftoken, uid, offerId)
+                    console.log(`addLib No.${num} ${title} result=${result} page=${page[0]} type=${type}`)
+                }
             })
             //break
         }
