@@ -135,7 +135,7 @@
 
     console.log("-> Start Process Items...")
     let num = 0
-    let nextPage = ""
+
     let urls = [
         "https://www.fab.com/i/listings/search?channels=unreal-engine&is_free=1&sort_by=-createdAt",//UE
         "https://www.fab.com/i/listings/search?channels=unity&is_free=1&sort_by=-createdAt", //Unity
@@ -144,8 +144,9 @@
         //这里如果仅仅只需要其中一种类型资源，比如只需要UE的，那可以只保留UE的链接
     ]
     for (url of urls) {
+        let nextPage = null
         console.log(`start by url=${url}`)
-        while (nextPage != null) {
+        do {
             let page = await getItemsApi(cookies, nextPage, url)
             console.log(`page=${page[0]} ,count=${page[1].length}`)
             nextPage = page[0]
@@ -165,7 +166,7 @@
                     }
                 }
             })
-            //break
-        }
+            //break //测试用
+        } while (nextPage != null)
     }
 })())
