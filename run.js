@@ -21,8 +21,8 @@
             "method": "GET",
         })
         let data = await response.json()
-        let nextPage = data.cursors.next
-        let uidList = data.results.map(result => result.uid)
+        let nextPage = data.cursors?.next ?? ""
+        let uidList = data.results?.map(result => result.uid) ?? []
         //console.log(data.cursors.previous)
         //console.log(`测试物品数据: ${JSON.stringify(data)}`)
         return [nextPage, uidList]
@@ -94,6 +94,8 @@
      * 获取许可状态
      */
     const listingsStateApi = async (cookies, token, uids) => {
+        if (!Array.isArray(uids) || !uids.length)
+            return {}
         let uidParams = uids.map(uid => `listing_ids=${uid}`).join("&")
         const response = await fetch(`https://www.fab.com/i/users/me/listings-states?${uidParams}`, {
             "headers": {
@@ -145,13 +147,13 @@
         console.log(`start by url=${url}`)
         while (nextPage != null) {
             let page = await getItemsApi(cookies, nextPage, url)
-            console.log(`page=${page[0]} ,count=${page.length}`)
+            console.log(`page=${page[0]} ,count=${page[1].length}`)
             nextPage = page[0]
             //先获取许可状态
             let states = await listingsStateApi(cookies, csrftoken, page[1])
             //并发循环获取详情
             page[1].forEach(async uid => {
-                //已入库的不再重复。不过如果需要自动更新许可类型（尽量换成专业版，可以把这个限制去掉）
+                //已入库的不再重复。不过如果需要自动更新许可类型（尽量换成专业版）可以把这个限制去掉）
                 if (states[uid] == false) {
                     let info = await listingsApi(cookies, csrftoken, uid)
                     let [offerId, type, title] = info
@@ -163,7 +165,7 @@
                     }
                 }
             })
-            break
+            //break
         }
     }
 })())
