@@ -23,7 +23,8 @@
         let data = await response.json()
         let nextPage = data.cursors.next
         let uidList = data.results.map(result => result.uid)
-        console.log(data.cursors.previous)
+        //console.log(data.cursors.previous)
+        //console.log(`测试物品数据: ${JSON.stringify(data)}`)
         return [nextPage, uidList]
     }
 
@@ -84,7 +85,35 @@
                 }
             }
         }
+        //console.log(`测试数据: ${JSON.stringify(data)}`)
         return [offerId, type, title]
+    }
+
+
+    /**
+     * 获取许可状态
+     */
+    const listingsStateApi = async (cookies, token, uids) => {
+        let uidParams = uids.map(uid => `listing_ids=${uid}`).join("&")
+        const response = await fetch(`https://www.fab.com/i/users/me/listings-states?${uidParams}`, {
+            "headers": {
+                "cookie": cookies,
+                "accept": "application/json, text/plain, */*",
+                "x-csrftoken": token,
+                "x-requested-with": "XMLHttpRequest"
+            },
+            "referrer": "https://www.fab.com/",
+            "referrerPolicy": "strict-origin-when-cross-origin",
+            "body": null,
+            "method": "GET",
+            "mode": "cors",
+            "credentials": "include"
+        })
+        let data = await response.json()
+        return data.reduce((acc, item) => {
+            acc[item.uid] = item.acquired;
+            return acc;
+        }, {})
     }
 
     // 获取cookies和xtoken
@@ -110,6 +139,7 @@
         "https://www.fab.com/i/listings/search?channels=unity&is_free=1&sort_by=-createdAt", //Unity
         "https://www.fab.com/i/listings/search?channels=uefn&is_free=1&sort_by=-createdAt", //UEFN
         "https://www.fab.com/i/listings/search?currency=USD&seller=Quixel&sort_by=listingTypeWeight" //Quixel迁移
+        //这里如果仅仅只需要其中一种类型资源，比如只需要UE的，那可以只保留UE的链接
     ]
     for (url of urls) {
         console.log(`start by url=${url}`)
@@ -117,18 +147,23 @@
             let page = await getItemsApi(cookies, nextPage, url)
             console.log(`page=${page[0]} ,count=${page.length}`)
             nextPage = page[0]
+            //先获取许可状态
+            let states = await listingsStateApi(cookies, csrftoken, page[1])
             //并发循环获取详情
             page[1].forEach(async uid => {
-                let info = await listingsApi(cookies, csrftoken, uid)
-                let [offerId, type, title] = info
-                if (offerId != null) {
-                    console.log(`No.${++num} Item: name=${title} , offerId=${offerId}`)
-                    //入库
-                    let result = await addLibApi(cookies, csrftoken, uid, offerId)
-                    console.log(`addLib No.${num} ${title} result=${result} page=${page[0]} type=${type}`)
+                //已入库的不再重复。不过如果需要自动更新许可类型（尽量换成专业版，可以把这个限制去掉）
+                if (states[uid] == false) {
+                    let info = await listingsApi(cookies, csrftoken, uid)
+                    let [offerId, type, title] = info
+                    if (offerId != null) {
+                        console.log(`No.${++num} Item: name=${title} , offerId=${offerId}`)
+                        //入库
+                        let result = await addLibApi(cookies, csrftoken, uid, offerId)
+                        console.log(`addLib No.${num} ${title} result=${result} page=${page[0]} type=${type}`)
+                    }
                 }
             })
-            //break
+            break
         }
     }
 })())
