@@ -5,7 +5,7 @@
 >Note: 代码仅在chrome上测试通过，最好直接使用chrome
 
 ### 源码改动要点
-直接高速并发上百、上千请求，非常容易触发服务器的反爬虫或 API 限流（返回 429 或断开连接），并提示 "Too many requests."的问题，这个分支增加了以下功能：
+直接高速并发上百、上千请求，非常容易触发服务器的反爬虫或 API 限流（返回 429 或断开连接），并提示 "Too many requests."。针对这个问题对源代码更新如下：
 - 直接从 Unpkg、jsDelivr、Skypack 等 CDN 拉取 p-limit。
 - 封装统一的带重试的 fetch 函数 retryFetch(url, options)：
 - 捕获网络或响应码 ≥ 429 且 < 600，执行指数退避后重试。
